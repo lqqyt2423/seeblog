@@ -22,6 +22,28 @@ app.get('/', wrap(async (req, res) => {
   // render html
   let content = '';
   pages.forEach(page => {
+    const { url, name, targetPosts } = page;
+    content += `<h3><a href="${url}" target="_blank">${name}</a></h3>`;
+    if (targetPosts.length) {
+      content += '<ol>';
+      targetPosts.forEach(post => {
+        const { link, title, date } = post;
+        content += `<li class="mono-font"><span class="margin-right-10 gray">${date}</span><a href="${link}" target="_blank">${title}</a></li>`;
+      });
+      content += '</ol>';
+    }
+  });
+  const html = indexTemp.render({ content, title: 'index' });
+  res.type('html');
+  res.send(html);
+}));
+
+app.get('/all', wrap(async (req, res) => {
+  await pages.getPages();
+
+  // render html
+  let content = '';
+  pages.forEach(page => {
     const { url, name, posts } = page;
     content += `<h3><a href="${url}" target="_blank">${name}</a></h3>`;
     if (posts.length) {

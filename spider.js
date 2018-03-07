@@ -2,6 +2,24 @@
 
 const rq = require('./rq');
 
+// 文章请求次数计数
+const countPost = function() {
+  const { posts, getCount, hidePoint } = this;
+  posts.forEach(post => {
+    const { link } = post;
+    if (getCount[link]) {
+      getCount[link]++;
+    } else {
+      getCount[link] = 1;
+    }
+  });
+  const targetPosts = posts.filter(post => {
+    const { link } = post;
+    return getCount[link] <= hidePoint;
+  });
+  this.targetPosts = targetPosts;
+};
+
 const pages = [
   {
     name: 'v2ex-hot',
@@ -16,7 +34,11 @@ const pages = [
       });
       this.posts = posts;
       return posts;
-    }
+    },
+    posts: [],
+    getCount: {},
+    hidePoint: 3,
+    targetPosts: []
   },
   {
     name: '阮一峰的网络日志',
@@ -49,7 +71,11 @@ const pages = [
 
       this.posts = posts;
       return posts;
-    }
+    },
+    posts: [],
+    getCount: {},
+    hidePoint: 10,
+    targetPosts: []
   },
   {
     name: 'Jerry Qu',
@@ -64,7 +90,11 @@ const pages = [
       });
       this.posts = posts;
       return posts;
-    }
+    },
+    posts: [],
+    getCount: {},
+    hidePoint: 10,
+    targetPosts: []
   },
   // {
   //   name: '酷壳',
@@ -88,6 +118,9 @@ const getPages = async () => {
     return page.getPosts(page).then(() => {
       // eslint-disable-next-line
       console.log(page.name, `${Date.now() - start}ms`);
+
+      // 计数 筛选出可能未看的文章
+      countPost.call(page);
     });
   }));
 };
