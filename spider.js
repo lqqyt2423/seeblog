@@ -13,6 +13,13 @@ const countPost = function() {
       getCount[link] = 1;
     }
   });
+
+  // 删除之前的文章链接属性
+  const linkArray = posts.map(p => p.link);
+  Object.keys(getCount).forEach(link => {
+    if (linkArray.indexOf(link) === -1) delete getCount[link];
+  });
+
   const targetPosts = posts.filter(post => {
     const { link } = post;
     return getCount[link] <= hidePoint;
@@ -30,6 +37,7 @@ const pages = [
       const posts = [];
       body.replace(/class="item_title"><a href="(.+?)">(.+?)<\/a>(.|\n)+?&nbsp; (\d.+?前) &nbsp/g, (match, link, title, _, date) => {
         link = 'https://www.v2ex.com' + link;
+        link = link.replace(/#.+?$/, '');
         posts.push({ link, title, date });
       });
       this.posts = posts;
@@ -78,6 +86,26 @@ const pages = [
     targetPosts: []
   },
   {
+    name: '王垠',
+    url: 'http://www.yinwang.org/',
+    getPosts: async function(page) {
+      const { url } = page;
+      const { body } = await rq.get(url);
+      const posts = [];
+      body.replace(/list-group-item(.|\n)+?href="(.+?)">(.+?)<\/a>/g, (match, _, link, title) => {
+        link = 'http://www.yinwang.org' + link;
+        const date = /201\d\/\d\d\/\d\d/.exec(link)[0];
+        posts.push({ link, title, date });
+      });
+      this.posts = posts.slice(0, 10);
+      return posts;
+    },
+    posts: [],
+    getCount: {},
+    hidePoint: 10,
+    targetPosts: []
+  },
+  {
     name: 'Jerry Qu',
     url: 'https://imququ.com/',
     getPosts: async function(page) {
@@ -96,6 +124,25 @@ const pages = [
     hidePoint: 10,
     targetPosts: []
   },
+  {
+    name: '小胡子哥',
+    url: 'https://www.barretlee.com/entry/',
+    getPosts: async function(page) {
+      const { url } = page;
+      const { body } = await rq.get(url);
+      const posts = [];
+      body.replace(/timeCreated" aria-hidden="true">(\d{4}-\d\d-\d\d).+?<a href="(.+?)" itemprop="url" itemprop="name">(.+?)<\/a>/g, (match, date, link, title) => {
+        link = 'https://www.barretlee.com' + link;
+        posts.push({ link, title, date });
+      });
+      this.posts = posts;
+      return posts;
+    },
+    posts: [],
+    getCount: {},
+    hidePoint: 10,
+    targetPosts: []
+  }
   // {
   //   name: '酷壳',
   //   url: 'https://coolshell.cn/',
