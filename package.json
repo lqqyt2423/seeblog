@@ -4,7 +4,8 @@
   "description": "see blog",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "daemon": "pm2 start index.js --name=\"seeblog\""
   },
   "author": "liqiqiang",
   "license": "MIT",
