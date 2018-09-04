@@ -56,7 +56,7 @@ const pages = [
       const { body } = await rq.get(url);
 
       const posts = [];
-      
+
       // 第一篇文章
       let matches = /asset-name.+?href="(.+?)".+?>(.+?)<\/a>/.exec(body);
       const [link, title] = [matches[1], matches[2]];
@@ -168,6 +168,9 @@ const getPages = async () => {
 
       // 计数 筛选出可能未看的文章
       countPost.call(page);
+    }).catch(e => {
+      console.log(page.name, 'error');
+      console.log(e);
     });
   }));
 };

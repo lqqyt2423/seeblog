@@ -10,10 +10,11 @@ class Template {
     if (Object.prototype.toString.call(params) !== '[object Object]') {
       throw new Error('传入的参数必须为对象');
     }
-    let keys = Object.keys(params);
+
+    const keys = Object.keys(params);
     let html = this.template;
     keys.forEach(key => {
-      let pattern = new RegExp(`<%=\\s${key}\\s%>`, 'ig');
+      const pattern = new RegExp(`<%=\\s${key}\\s%>`, 'ig');
       html = html.replace(pattern, params[key]);
     });
     // 替换掉剩余未转换的标记

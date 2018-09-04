@@ -12,7 +12,11 @@ const indexTemp = new Template(fs.readFileSync(path.join(__dirname, './template/
 const app = express();
 
 // async function wrap for handle error
-const wrap = fn => (...args) => fn(...args).catch(args[2]);
+const wrap = routeFn => {
+  return (...args) => {
+    return routeFn(...args).catch(args[2]);
+  };
+};
 
 app.use(morgan('dev'));
 
